@@ -28,8 +28,10 @@ public class Main extends Application {
     private Pane gameRoot = new Pane();
     private Pane uiRoot = new Pane();
     private Label playerLabel = new Label();
+    private Label vectorLable = new Label();
+    private Label isGoingDown = new Label();
+    private boolean goingDown = false;
 
-    private VBox vbox = new VBox();
 
     private Node player;
     private Point2D playerVelocity = new Point2D(0,0);
@@ -45,7 +47,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         initGameContent();
 
-        Scene scene = new Scene(appRoot);
+        Scene scene = new Scene(appRoot,1280,760);
+        scene.setFill(Color.SLATEBLUE);
         scene.setOnKeyPressed(event -> keys.put(event.getCode(),true));
         scene.setOnKeyReleased(event -> keys.put(event.getCode(), false));
 
@@ -64,7 +67,7 @@ public class Main extends Application {
     }
 
     private void update() {
-        if (isPressed(KeyCode.W) && player.getTranslateY() >= 5){
+        if (isPressed(KeyCode.SPACE) && player.getTranslateY() >= 5){
             jumpPlayer();
         }
         if (isPressed(KeyCode.A) && player.getTranslateX() >= 5){
@@ -83,17 +86,23 @@ public class Main extends Application {
 
     private void movePlayerY(int value) {
        boolean movingDown = value > 0;
+        goingDown = movingDown;
         for (int i = 0; i < Math.abs(value); i++) {
             for (Node block : buildBlocks){
-                if ((player.getTranslateX() + 40 >= block.getTranslateX() && player.getTranslateX() <= block.getTranslateX() + 60) && (player.getTranslateY() <= block.getTranslateY()+60 && player.getTranslateY() >= block.getTranslateY())){
+                printVelocityVector();
+                if (isIntersect(player, block)){
                     if (movingDown){
+                        canJump = false;
                         if (player.getTranslateY() + 40 == block.getTranslateY()){
                             player.setTranslateY(player.getTranslateY() - 1);
+                            printVelocityVector();
                             canJump = true;
                             return;
                         }
                     } else {
-                        if (player.getTranslateY() == block.getTranslateY()){
+                        if (player.getTranslateY() == block.getTranslateY()+60){
+                            printVelocityVector();
+                            player.setTranslateY(player.getTranslateY()+1);
                             return;
                         }
                     }
@@ -111,19 +120,16 @@ public class Main extends Application {
 
         for (int i = 0; i < Math.abs(value); i++) {
             for (Node block: buildBlocks){
-                if (player.getTranslateX()+40 >= block.getTranslateX()
-                        && (player.getTranslateY() >= block.getTranslateY() && player.getTranslateY() +40 <= block.getTranslateY()+60 )
-                || player.getTranslateX() <= block.getTranslateX()+60
-                        && (player.getTranslateY() >= block.getTranslateY() && player.getTranslateY() +40 <= block.getTranslateY()+60 )){
-                    System.out.println("player X: " + player.getTranslateX());
-                    if(movingRight){
+                printVelocityVector();
+                if (isIntersect(player, block)){
+                      if(movingRight){
                         if(player.getTranslateX() + 40 == block.getTranslateX()){
-                            System.out.println("BLOCK bound in parent: " + block.getBoundsInParent());
-                                                        return;
+                            printVelocityVector();
+                            return;
                         }
                     }else {
                         if (player.getTranslateX() == block.getTranslateX() + 60){
-                            System.out.println("BLOCK bound in parent: " + block.getBoundsInParent());
+                            printVelocityVector();
                             return;
                         }
                     }
@@ -156,8 +162,11 @@ public class Main extends Application {
             for (int j = 0; j < line.length(); j++) {
                 Node block;
                 switch (line.charAt(j)){
+                    case '0':
+                        block = createGameBlock(j*60,i*60,60,60, Color.web("#A0D0FD"));
+                        break;
                     case '1':
-                        block = createGameBlock(j*60,i*60,60,60, Color.web("#B5781D"));
+                        block = createGameBlock(j*60,i*60,60,60, Color.web("#07634D"));
                         buildBlocks.add(block);
                         break;
                     case '2':
@@ -179,9 +188,21 @@ public class Main extends Application {
         });
         playerLabel.setTranslateX(0);
         playerLabel.setTranslateY(0);
-        playerLabel.setTextFill(Color.WHITE);
+        playerLabel.setTextFill(Color.web("#F3381E"));
         playerLabel.setText("Player position - X: " + player.getTranslateX() + "Y: " + player.getTranslateY());
-        uiRoot.getChildren().add(playerLabel);
+        vectorLable.setTranslateX(0);
+        vectorLable.setTranslateY(20);
+        vectorLable.setTextFill(Color.web("#F3381E"));
+
+        isGoingDown.setTranslateX(0);
+        isGoingDown.setTranslateY(40);
+        isGoingDown.setTextFill(Color.web("#F3381E"));
+
+        printVelocityVector();
+        uiRoot.getChildren().addAll(playerLabel,vectorLable,isGoingDown);
+
+
+
         appRoot.getChildren().addAll(bg,gameRoot,uiRoot);
     }
 
@@ -193,5 +214,17 @@ public class Main extends Application {
 
         gameRoot.getChildren().add(block);
         return block;
+    }
+
+    private boolean isIntersect(Node a, Node b){
+        return (a.getTranslateX() + 40 >= b.getTranslateX()
+                && a.getTranslateX() <= b.getTranslateX() + 60
+                && a.getTranslateY() <= b.getTranslateY()+60
+                && a.getTranslateY() +40 >= b.getTranslateY());
+    }
+
+    private void printVelocityVector(){
+        vectorLable.setText("Velocity vector: X: " + playerVelocity.getX() + " Y: " + playerVelocity.getY() + "Magmitude: " + playerVelocity.magnitude());
+        isGoingDown.setText("IS GOING DOWN: " + goingDown);
     }
 }
