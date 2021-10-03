@@ -6,11 +6,15 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.scene.layout.Pane;
+import javafx.scene.control.Label;
+import jdk.nashorn.internal.ir.Block;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,6 +27,9 @@ public class Main extends Application {
     private Pane appRoot = new Pane();
     private Pane gameRoot = new Pane();
     private Pane uiRoot = new Pane();
+    private Label playerLabel = new Label();
+
+    private VBox vbox = new VBox();
 
     private Node player;
     private Point2D playerVelocity = new Point2D(0,0);
@@ -71,10 +78,31 @@ public class Main extends Application {
         }
 
        movePlayerY((int)playerVelocity.getY());
-
+       playerLabel.setText("Player position - X: "+ player.getTranslateX() + "Y: " + player.getTranslateY());
     }
 
-    private void movePlayerY(int y) {
+    private void movePlayerY(int value) {
+       boolean movingDown = value > 0;
+        for (int i = 0; i < Math.abs(value); i++) {
+            for (Node block : buildBlocks){
+                if ((player.getTranslateX() + 40 >= block.getTranslateX() && player.getTranslateX() <= block.getTranslateX() + 60) && (player.getTranslateY() <= block.getTranslateY()+60 && player.getTranslateY() >= block.getTranslateY())){
+                    if (movingDown){
+                        if (player.getTranslateY() + 40 == block.getTranslateY()){
+                            player.setTranslateY(player.getTranslateY() - 1);
+                            canJump = true;
+                            return;
+                        }
+                    } else {
+                        if (player.getTranslateY() == block.getTranslateY()){
+                            return;
+                        }
+                    }
+                }
+            }
+            player.setTranslateY(player.getTranslateY() + (movingDown ? 1 : -1));
+        }
+
+
 
     }
 
@@ -83,16 +111,19 @@ public class Main extends Application {
 
         for (int i = 0; i < Math.abs(value); i++) {
             for (Node block: buildBlocks){
-                if (!player.getBoundsInParent().intersects(block.getBoundsInParent())){
+                if (player.getTranslateX()+40 >= block.getTranslateX()
+                        && (player.getTranslateY() >= block.getTranslateY() && player.getTranslateY() +40 <= block.getTranslateY()+60 )
+                || player.getTranslateX() <= block.getTranslateX()+60
+                        && (player.getTranslateY() >= block.getTranslateY() && player.getTranslateY() +40 <= block.getTranslateY()+60 )){
                     System.out.println("player X: " + player.getTranslateX());
                     if(movingRight){
-                        if(player.getTranslateX() == block.getTranslateX()){
-                            System.out.println("BLOCK  X: " + block.getTranslateX() + 60 + " block : " + block.getId());
-                            return;
+                        if(player.getTranslateX() + 40 == block.getTranslateX()){
+                            System.out.println("BLOCK bound in parent: " + block.getBoundsInParent());
+                                                        return;
                         }
                     }else {
                         if (player.getTranslateX() == block.getTranslateX() + 60){
-                            System.out.println("BLOCK + 60 X: " + block.getTranslateX() + 60);
+                            System.out.println("BLOCK bound in parent: " + block.getBoundsInParent());
                             return;
                         }
                     }
@@ -137,7 +168,7 @@ public class Main extends Application {
             }
         }
 
-        player = createGameBlock(0,680,40,40,Color.BLUE);
+        player = createGameBlock(300,680,40,40,Color.BLUE);
 
         player.translateXProperty().addListener((obs, old,newValue) -> {
             int offset = newValue.intValue();
@@ -146,7 +177,11 @@ public class Main extends Application {
                 gameRoot.setLayoutX(-(offset-640));
             }
         });
-
+        playerLabel.setTranslateX(0);
+        playerLabel.setTranslateY(0);
+        playerLabel.setTextFill(Color.WHITE);
+        playerLabel.setText("Player position - X: " + player.getTranslateX() + "Y: " + player.getTranslateY());
+        uiRoot.getChildren().add(playerLabel);
         appRoot.getChildren().addAll(bg,gameRoot,uiRoot);
     }
 
