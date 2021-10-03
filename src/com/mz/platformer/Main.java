@@ -1,4 +1,4 @@
-package com.mz.vamk;
+package com.mz.platformer;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
