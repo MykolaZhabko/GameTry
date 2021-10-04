@@ -6,15 +6,11 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.scene.layout.Pane;
 import javafx.scene.control.Label;
-import jdk.nashorn.internal.ir.Block;
-
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -28,7 +24,7 @@ public class Main extends Application {
     private Pane gameRoot = new Pane();
     private Pane uiRoot = new Pane();
     private Label playerLabel = new Label();
-    private Label vectorLable = new Label();
+    private Label vectorLabel = new Label();
     private Label isGoingDown = new Label();
     private boolean goingDown = false;
 
@@ -96,7 +92,11 @@ public class Main extends Application {
                         if (player.getTranslateY() + 40 == block.getTranslateY()){
                             player.setTranslateY(player.getTranslateY() - 1);
                             printVelocityVector();
-                            canJump = true;
+                            if(!isPressed(KeyCode.SPACE)){
+                                canJump = true;
+                            }
+
+
                             return;
                         }
                     } else {
@@ -190,16 +190,16 @@ public class Main extends Application {
         playerLabel.setTranslateY(0);
         playerLabel.setTextFill(Color.web("#F3381E"));
         playerLabel.setText("Player position - X: " + player.getTranslateX() + "Y: " + player.getTranslateY());
-        vectorLable.setTranslateX(0);
-        vectorLable.setTranslateY(20);
-        vectorLable.setTextFill(Color.web("#F3381E"));
+        vectorLabel.setTranslateX(0);
+        vectorLabel.setTranslateY(20);
+        vectorLabel.setTextFill(Color.web("#F3381E"));
 
         isGoingDown.setTranslateX(0);
         isGoingDown.setTranslateY(40);
         isGoingDown.setTextFill(Color.web("#F3381E"));
 
         printVelocityVector();
-        uiRoot.getChildren().addAll(playerLabel,vectorLable,isGoingDown);
+        uiRoot.getChildren().addAll(playerLabel,vectorLabel,isGoingDown);
 
 
 
@@ -224,7 +224,7 @@ public class Main extends Application {
     }
 
     private void printVelocityVector(){
-        vectorLable.setText("Velocity vector: X: " + playerVelocity.getX() + " Y: " + playerVelocity.getY() + "Magmitude: " + playerVelocity.magnitude());
+        vectorLabel.setText("Velocity vector: X: " + playerVelocity.getX() + " Y: " + playerVelocity.getY() + "Magmitude: " + playerVelocity.magnitude());
         isGoingDown.setText("IS GOING DOWN: " + goingDown);
     }
 }
