@@ -4,11 +4,27 @@ import com.sun.javafx.geom.BaseBounds;
 import com.sun.javafx.geom.transform.BaseTransform;
 import com.sun.javafx.jmx.MXNodeAlgorithm;
 import com.sun.javafx.jmx.MXNodeAlgorithmContext;
+import javafx.scene.paint.Color;
 import com.sun.javafx.sg.prism.NGNode;
 import javafx.scene.Node;
 
 public class Entity extends Node {
 
+
+public abstract class Entity extends Node {
+    private Integer x;
+    private Integer y;
+    private Integer width;
+    private Integer height;
+    private Color color;
+
+    public Entity(Integer x, Integer y, Integer width, Integer height, Color color) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.color = color;
+    }
 
     @Override
     protected NGNode impl_createPeer() {
