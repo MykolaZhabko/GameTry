@@ -8,9 +8,6 @@ import javafx.scene.paint.Color;
 import com.sun.javafx.sg.prism.NGNode;
 import javafx.scene.Node;
 
-public class Entity extends Node {
-
-
 public abstract class Entity extends Node {
     private Integer x;
     private Integer y;
