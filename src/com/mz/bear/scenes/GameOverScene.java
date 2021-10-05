@@ -7,17 +7,24 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-public class GameScene extends GeneralScene{
+public class GameOverScene extends GeneralScene{
 
-    public GameScene(){
+    public GameOverScene(){
         super();
     }
 
-    private void showGameMessage(){
-        Font myFont = Font.font("Arial", FontWeight.NORMAL, 24);
+    public void showGameOverMessage(){
+        Font myFont = Font.font("Arial", FontWeight.NORMAL, 25);
         gc.setFont(myFont);
-        gc.setFill(Color.YELLOW);
-        gc.fillText("Game Scene", 325,200);
+        gc.setFill(Color.GREEN);
+        gc.fillText("Game Over", 200,200);
+
+        myFont = Font.font("Arial", FontWeight.NORMAL, 15);
+        gc.setFont(myFont);
+        gc.setFill(Color.GREEN);
+        gc.fillText("Press SPACE to go to Welcome page", 200,250);
+
+
     }
 
     @Override
@@ -29,14 +36,14 @@ public class GameScene extends GeneralScene{
                 gc.setFill(Color.BLACK);
                 gc.fillRect(0,0,GAME_WIDTH, GAME_HEIGH);
 
-                showGameMessage();
+                showGameOverMessage();
 
-                if (activeKeys.contains(KeyCode.ESCAPE)){
+                if (activeKeys.contains(KeyCode.SPACE)){
                     this.stop();
                     GameBear.setScene(GameBear.WELCOME_SCENE);
-                } else if(activeKeys.contains(KeyCode.ENTER)){
+                } else if(activeKeys.contains(KeyCode.ESCAPE)){
                     this.stop();
-                    GameBear.setScene(GameBear.GAME_OVER_SCENE);
+                    GameBear.exit();
                 }
             }
         }.start();
