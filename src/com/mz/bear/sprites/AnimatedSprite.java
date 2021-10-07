@@ -6,7 +6,7 @@ public class AnimatedSprite extends Sprite{
     public static final int RIGHT = 0;
     public static final int LEFT = 1;
 
-    public static final byte SPRITE_CHANGE = 10;
+    public static final byte SPRITE_CHANGE = 8;
 
 
     protected int currentDirection;

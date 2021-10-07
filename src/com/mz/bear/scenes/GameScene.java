@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 
 public class GameScene extends GeneralScene{
 
-    private static final String BACKGROUND_IMAGE = "background.png";
+    private static final String BACKGROUND_IMAGE = "forest3.png";
 
     private Image background;
     private Player bear;
@@ -38,7 +38,7 @@ public class GameScene extends GeneralScene{
     @Override
     public void draw() {
         activeKeys.clear();
-        bear.moveTo(380, 375);
+        bear.moveTo(380, 275);
         new AnimationTimer() {
             @Override
             public void handle(long currentNanoTime) {
