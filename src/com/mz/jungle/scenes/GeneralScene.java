@@ -5,9 +5,12 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class GeneralScene extends Scene {
     //constants for game window size
@@ -19,7 +22,8 @@ public abstract class GeneralScene extends Scene {
     // gc is for all drawing
     protected GraphicsContext gc;
 
-    protected HashMap<KeyCode, Boolean> keys = new HashMap<>();
+    protected Set<KeyCode> activeKeys;
+    protected Set<KeyCode> releasedKeys;
 
     public GeneralScene() {
         super(new StackPane(), GAME_WIDTH, GAME_HEIGHT);
@@ -30,7 +34,18 @@ public abstract class GeneralScene extends Scene {
         Canvas canvas = new Canvas(GAME_WIDTH, GAME_HEIGHT);
         root.getChildren().add(canvas);
         gc = canvas.getGraphicsContext2D();
-    }
 
+        activeKeys = new HashSet<>();
+        releasedKeys = new HashSet<>();
+
+        this.setOnKeyPressed(event -> {
+            activeKeys.add(event.getCode());
+        });
+        this.setOnKeyReleased(event -> {
+            activeKeys.remove(event.getCode());
+            releasedKeys.add(event.getCode());
+        });
+
+    }
     public abstract void draw();
 }
